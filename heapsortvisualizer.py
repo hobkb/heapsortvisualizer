@@ -20,6 +20,7 @@ spacing = 10
 bars = []
 nodes = []
 numbers = []  
+is_busy = False
 
 #DRAW ARRAY AS BARS
 def draw_bars(arr):
@@ -140,10 +141,18 @@ def heapify(n, i):
 
 #HEAP SORT
 def heap_sort():
+    global is_busy
+    if is_busy:
+        messagebox.showinfo("Busy", "Please wait for the current operation to finish.")
+        return
+
     n = len(numbers)
     if n == 0:
         messagebox.showwarning("Empty Heap", "No elements to sort!")
         return
+
+    is_busy = True
+    disable_buttons()
 
     for i in range(n // 2 - 1, -1, -1):
         heapify(n, i)
@@ -151,15 +160,30 @@ def heap_sort():
     for i in range(n - 1, 0, -1):
         swap_bars(0, i, speed=0.07)
         heapify(i, 0)
+        
+    is_busy = False
+    enable_buttons()
 
 #BUILD MAX HEAP ONLY
 def build_heap():
+    global is_busy
+    if is_busy:
+        messagebox.showinfo("Busy", "Please wait for the current operation to finish.")
+        return
+
     n = len(numbers)
     if n == 0:
         messagebox.showwarning("Empty Heap", "Please insert elements first!")
         return
+
+    is_busy = True
+    disable_buttons()
+
     for i in range(n // 2 - 1, -1, -1):
         heapify(n, i)
+    
+    is_busy = False
+    enable_buttons()
 
 
 def insert_value():
@@ -178,7 +202,7 @@ def insert_value():
 
 def generate_random_array():
     global numbers
-    numbers = np.random.randint(1, 50, 10).tolist()
+    numbers = np.random.randint(1, 100, 10).tolist()
     draw_all(numbers)
 
 
@@ -186,6 +210,21 @@ def reset_array():
     global numbers
     numbers = []
     draw_all(numbers)
+
+def disable_buttons():
+    btn_reset.config(state="disabled")
+    btn_random.config(state="disabled")
+    btn_insert.config(state="disabled")
+    btn_build.config(state="disabled")
+    btn_start.config(state="disabled")
+
+def enable_buttons():
+    btn_reset.config(state="normal")
+    btn_random.config(state="normal")
+    btn_insert.config(state="normal")
+    btn_build.config(state="normal")
+    btn_start.config(state="normal")
+
 
 #CONTROL BUTTONS
 frame = tk.Frame(root, bg="#2b2b2b")
